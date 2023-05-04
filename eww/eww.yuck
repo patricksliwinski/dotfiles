@@ -1,0 +1,82 @@
+(defpoll time :interval "1s"
+  :initial `date +'{"hour":"%H","min":"%M"}'`
+  `date +'{"hour":"%H","min":"%M"}'`)
+
+(defwindow controls
+  :geometry (geometry :x "600px" :y "620px" :width "300px" :height "200px")
+  (controls))
+
+(defwindow power
+  :geometry (geometry :x "920px" :y "620px" :width "80px" :height "200px")
+  (power))
+
+(defwindow calendar-full
+  :geometry (geometry :x "600px" :y "200px" :width "400px" :height "400px")
+  (calendar-full))
+
+(defwindow disk
+  :geometry (geometry :x "1020px" :y "200px" :width "200px" :height "200px")
+  (disk))
+
+(defwindow todo
+  :geometry (geometry :x "1020px" :y "420px" :width "420px" :height "400px")
+  (todo))
+
+(defwidget controls [] 
+  (box :orientation "v" :space-evenly "false" :class "sliders-side"
+    (box :orientation "h" :class "slider-vol-side" :space-evenly "false" 
+      (box :class "label-vol-side" "󰕾")
+      (scale :min 0 :max 101 :value {volume} :onchange "amixer -D pulse sset Master {}%"))
+    (box :orientation "h" :class "slider-bright-side" :space-evenly "false" 
+      (box :class "label-bright-side" "󰃠")
+      (scale :min 0 :max 101 :value {brightness} :onchange "brightnessctl s {}%"))
+    (box :orientation "h" :class "slider-ram-side" :space-evenly "false" 
+      (box :class "label-ram-side" "󰍛")
+      (scale :min 0 :active "false" :max 101 :value {ram}))
+    (box :orientation "h" :class "slider-battery-side" :space-evenly "false" 
+      (box :class "label-battery-side" "󰁹")
+      (scale :min 0 :active "false" :max 101 :value {battery}))))
+
+(defwidget power [] 
+  (box :orientation "v" :halign "center" :class "sysbtn" :space-evenly "true" 
+    (button :class "shutdown-side" :onclick "shutdown now" :timeout "60s" "")
+    (button :class "reboot-side" :onclick "systemctl reboot" :timeout "60s" "")
+    (button :class "suspend-side" :onclick "systemctl suspend" :timeout "60s" "")))
+
+(defwidget calendar-full [] 
+  (box :orientation "v" :halign "center" :space-evenly "false" 
+      (box :class "time" "${hour} : ${min}")
+      (box :class "calendar_title" "${day}, ${number_day} ${month_full} ${year_full}")
+      (box :class "calendar" 
+        (calendar :show-details "true"))))
+
+(defwidget disk []
+  (overlay
+    (label :class "circular-label disk-label" :text "${disk-used}GB / ${disk-total}GB")
+    (circular-progress :class "circular-bg disk-bg":value 100 :thickness 10)
+    (circular-progress :value "${disk-used/disk-total * 100}" :thickness 10)))
+
+(defwidget todo []
+  (label :text "${todo-list}more"))
+
+(defpoll number_day :interval "5h"  "date \"+%d\"")
+(defpoll month :interval "10h"  "date \"+%b\"")
+(defpoll min :interval "1s"  "date \"+%M\"")
+(defpoll hour :interval "1m"  "date \"+%H\"")
+(defpoll day :interval "15h"  "~/.config/eww/scripts/getday")
+(defpoll month_full :interval "15h"  "date \"+%B\"")
+(defpoll year_full :interval "15h"  "date \"+%Y\"")
+
+(defpoll volume :interval "100ms"  "~/.config/eww/scripts/getvolume")
+(defpoll brightness :interval "100ms"  "~/.config/eww/scripts/getbrightness")
+(defpoll ram :interval "5s"  "~/.config/eww/scripts/getram")
+(defpoll battery :interval "1m"  "cat /sys/class/power_supply/BAT0/capacity")
+
+(defpoll disk-total :interval "100ms" "~/.config/eww/scripts/getdisktotal")
+(defpoll disk-used :interval "100ms" "~/.config/eww/scripts/getdiskused")
+
+(defpoll todo-list :interval "100ms" "python3 ~/.config/eww/scripts/todo.py list")
+
+(defvar todo-list "{'items': [1, 2, 3]}")
+
+
