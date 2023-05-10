@@ -397,9 +397,28 @@ button {
 }
 
 .disk {
-  color: $blue;
+  color: $red;
+  margin: 10px;
 }
 
 .disk-label {
+  color: $red;
+}
+
+.todo-title {
+  color: $green;
+  margin: 10px;
+  font-size: 24px;
+}
+
+.todo-item {
+  font-size: 18px;
   color: $blue;
+  margin: 5px 15px 5px 15px;
+}
+
+.info {
+  font-size: 18px;
+  margin: 3px 15px 3px 15px;
+  color: $purple;
 }

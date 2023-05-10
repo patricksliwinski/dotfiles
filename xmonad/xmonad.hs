@@ -21,7 +21,7 @@ myKeybindings =
     (("M-z"), spawn "zeal $(xclip -o)"),
     (("M-a"), kill),
     (("M-t"), withFocused toggleFloat),
-    (("M-n"), spawn "exec /usr/local/bin/eww open-many controls power calendar-full disk todo"),
+    (("M-n"), spawn "exec /usr/local/bin/eww open-many controls power calendar-full disk info todo"),
     (("M-b"), spawn "exec /usr/local/bin/eww close-all")
   ]
 

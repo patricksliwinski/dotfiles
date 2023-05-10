@@ -1,25 +1,25 @@
-(defpoll time :interval "1s"
-  :initial `date +'{"hour":"%H","min":"%M"}'`
-  `date +'{"hour":"%H","min":"%M"}'`)
-
 (defwindow controls
-  :geometry (geometry :x "600px" :y "620px" :width "300px" :height "200px")
+  :geometry (geometry :x "540px" :y "620px" :width "300px" :height "200px")
   (controls))
 
 (defwindow power
-  :geometry (geometry :x "920px" :y "620px" :width "80px" :height "200px")
+  :geometry (geometry :x "860px" :y "620px" :width "80px" :height "200px")
   (power))
 
 (defwindow calendar-full
-  :geometry (geometry :x "600px" :y "200px" :width "400px" :height "400px")
+  :geometry (geometry :x "540px" :y "200px" :width "400px" :height "400px")
   (calendar-full))
 
 (defwindow disk
-  :geometry (geometry :x "1020px" :y "200px" :width "200px" :height "200px")
+  :geometry (geometry :x "960px" :y "200px" :width "200px" :height "200px")
   (disk))
 
+(defwindow info
+  :geometry (geometry :x "1180px" :y "200px" :width "200px" :height "200px")
+  (info))
+
 (defwindow todo
-  :geometry (geometry :x "1020px" :y "420px" :width "420px" :height "400px")
+  :geometry (geometry :x "960px" :y "420px" :width "420px" :height "400px")
   (todo))
 
 (defwidget controls [] 
@@ -51,13 +51,29 @@
         (calendar :show-details "true"))))
 
 (defwidget disk []
-  (overlay
+  (overlay :class "disk-overlay"
     (label :class "circular-label disk-label" :text "${disk-used}GB / ${disk-total}GB")
     (circular-progress :class "circular-bg disk-bg":value 100 :thickness 10)
     (circular-progress :value "${disk-used/disk-total * 100}" :thickness 10)))
 
+(defwidget info []
+  (box :orientation "v" :halign "start" :space-evenly "false"
+    (label :class "info" :halign "start" :text "OS: ${os}")
+    (label :class "info" :halign "start" :text "Release: ${release}")
+    (label :class "info" :halign "start" :text "Processors: ${nproc}")
+    (label :class "info" :halign "start" :text "L1i: ${l1i}")
+    (label :class "info" :halign "start" :text "L1d: ${l1d}")
+    (label :class "info" :halign "start" :text "L2: ${l2}")))
+
 (defwidget todo []
-  (label :text "${todo-list}more"))
+  (box :orientation "v" :halign "fill" :space-evenly "false"
+    (label :class "todo-title" :text "Todo")
+
+    ; the list needs to be in a box in case you want to place items below
+    (box :orientation "v" :halign "start" :space-evenly "false"
+      (for item in {todo-list.items}
+        (eventbox :halign "start" :onclick "python3 ~/.config/eww/scripts/todo.py remove '${item}'"
+          (label :class "todo-item" :text "- ${item}"))))))
 
 (defpoll number_day :interval "5h"  "date \"+%d\"")
 (defpoll month :interval "10h"  "date \"+%b\"")
@@ -75,8 +91,14 @@
 (defpoll disk-total :interval "100ms" "~/.config/eww/scripts/getdisktotal")
 (defpoll disk-used :interval "100ms" "~/.config/eww/scripts/getdiskused")
 
-(defpoll todo-list :interval "100ms" "python3 ~/.config/eww/scripts/todo.py list")
+(defpoll todo-list :interval "100ms" "~/.config/eww/scripts/gettodo")
 
-(defvar todo-list "{'items': [1, 2, 3]}")
+(defpoll os :interval "24h" "lsb_release -i -s")
+(defpoll release :interval "24h" "lsb_release -r -s")
+(defpoll nproc :interval "24h" "nproc")
+(defpoll l1d :interval "24h" "lscpu -C | grep 'L1d' | awk '{print $2}'")
+(defpoll l1i :interval "24h" "lscpu -C | grep 'L1i' | awk '{print $2}'")
+(defpoll l2 :interval "24h" "lscpu -C | grep 'L2' | awk '{print $2}'")
+
 
 
