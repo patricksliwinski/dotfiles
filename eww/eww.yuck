@@ -22,6 +22,18 @@
   :geometry (geometry :x "960px" :y "420px" :width "420px" :height "400px")
   (todo))
 
+(defwindow man-prompt
+  :wm-ignore "false"
+  (man-prompt))
+
+(defwindow dict-prompt
+  :wm-ignore "false"
+  (dict-prompt))
+
+(defwindow zeal-prompt
+  :wm-ignore "false"
+  (zeal-prompt))
+
 (defwidget controls [] 
   (box :orientation "v" :space-evenly "false" :class "sliders-side"
     (box :orientation "h" :class "slider-vol-side" :space-evenly "false" 
@@ -74,6 +86,18 @@
       (for item in {todo-list.items}
         (eventbox :halign "start" :onclick "python3 ~/.config/eww/scripts/todo.py remove '${item}'"
           (label :class "todo-item" :text "- ${item}"))))))
+
+(defwidget man-prompt []
+  (box :class "prompt-box"
+    (input :class "prompt" :onaccept "alacritty --hold -e man {} & eww close-all")))
+
+(defwidget dict-prompt []
+  (box :class "prompt-box"
+    (input :class "prompt" :onaccept "alacritty --hold -e sdcv {} & eww close dict-prompt")))
+
+(defwidget zeal-prompt []
+  (box :class "prompt-box"
+    (input :class "prompt" :onaccept "zeal {} & eww close zeal-prompt")))
 
 (defpoll number_day :interval "5h"  "date \"+%d\"")
 (defpoll month :interval "10h"  "date \"+%b\"")
